@@ -2,43 +2,46 @@ package daemon
 
 import (
 	"fmt"
-	"sync"
-
-	"github.com/cdmistman/protectedssh/config"
-	"github.com/gliderlabs/ssh"
+	"os"
 )
 
-// Daemon is the current daemon process.
-type Daemon struct {
-	mux sync.Mutex
-
-	cfg *config.Config
+// Daemon represents a running pssh daemon.
+type daemon struct {
 }
 
-// New returns a new Daemon.
-func New(cfg *config.Config) Daemon {
-	return Daemon{
-		cfg: cfg,
+// Run runs the daemon using the given DaemonOpts
+// object.
+func Run(opts Opts, exit chan ExitMode, log chan Message) (err error) {
+	opts.exit = make(chan ExitMode)
+
+	sshErr := runSSHServer(&opts)
+	if err != nil {
+
+		return
 	}
-}
 
-// Serve starts listening for incoming ssh connections
-// and handles them appropriately.
-func (daemon *Daemon) Serve() error {
-	server := ssh.Server{}
-	defer server.Close()
+	dockerErr := runDockerServer(&opts)
+	if err != nil {
+		return
+	}
 
-	// init the ssh server
-	server.Addr = fmt.Sprintf(":%v", daemon.cfg.DaemonOpts.GetPort())
-	server.HostSigners = daemon.getHostSigners()
+loop:
+	for {
+		select {
+		case msg := <-log:
+			fmt.Println(msg)
+		case code := <-exit:
+			if code == 0 {
+				os.Exit(1)
+			} else {
+				break loop
+			}
+		case err = <-sshErr:
+			break loop
+		case err = <-dockerErr:
+			break loop
+		}
+	}
 
-	server.PublicKeyHandler = publicKeyHandler
-	server.ServerConfigCallback = serverConfigCallback
-
-	return server.ListenAndServe()
-}
-
-func (daemon *Daemon) getHostSigners() []ssh.Signer {
-	res := make([]ssh.Signer, 0)
-	return res
+	return
 }

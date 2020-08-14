@@ -44,6 +44,19 @@ func main() {
 			},
 		},
 	})
+	app.Commands = append(app.Commands, &cli.Command{
+		Name: "user",
+		Subcommands: []*cli.Command{
+			{
+				Name:   "add",
+				Action: userAdd,
+			},
+			{
+				Name:   "del",
+				Action: userDel,
+			},
+		},
+	})
 
 	err := app.Run(os.Args)
 	if err != nil {
