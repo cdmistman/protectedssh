@@ -1,10 +1,12 @@
 package main
 
+// TODO: update to just use github.com/cdmistman/daemon for pssh.
+// TODO: use github.com/kardianos/service for daemon management.
+
 import (
 	"errors"
 
 	"github.com/cdmistman/protectedssh/config"
-	"github.com/cdmistman/protectedssh/daemon"
 	"github.com/urfave/cli/v2"
 )
 
@@ -35,8 +37,9 @@ func daemonRun(ctx *cli.Context) (err error) {
 	}
 
 	// construct and run daemon
-	server := daemon.New(&cfg)
-	return server.Serve()
+	// server := daemon.New(&cfg)
+	// return server.Serve()
+	return
 }
 
 // Tells the daemon server to start handling ssh requests.

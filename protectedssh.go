@@ -1,5 +1,7 @@
 package main
 
+// TODO: we only need the github.com/cdmistman/daemon package, delete the others.
+
 import (
 	"fmt"
 	"os"
