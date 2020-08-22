@@ -24,13 +24,18 @@ const (
 type Message string
 
 // Opts is the options that are used to run the daemon.
+// TODO: should be parsed from /etc/protectedssh/config.toml or something like that.
 type Opts struct {
-	exit chan ExitMode
-
+	// below are only used locally
+	exit       chan ExitMode
 	sshComm    chan string
 	dockerComm chan string
 
-	ports []int
+	// below are read from file and collected from other configurations
+	ports map[int]bool // Mathematical set of all ports.
 
-	users []User // The list of user configurations.
+	// below are read from file
+	maxAuthTries int
+	usersDir     string          // location of all user configurations.
+	users        map[string]User // The list of user configurations. Mapped username to User config.
 }

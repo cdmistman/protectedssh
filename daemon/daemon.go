@@ -9,8 +9,7 @@ import (
 type daemon struct {
 }
 
-// Run runs the daemon using the given DaemonOpts
-// object.
+// Run runs the daemon using the given DaemonOpts object.
 func Run(opts Opts, exit chan ExitMode, log chan Message) (err error) {
 	opts.exit = make(chan ExitMode)
 
