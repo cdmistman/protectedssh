@@ -1,5 +1,7 @@
 # protectedssh
 
+NOTE: This project is now archived I'm moving this project to be a part of [dweb](github.com/cdmistman/dweb).
+
 protectedssh is an SSH daemon for running SSH users in a Docker container.
 
 ## How it works
